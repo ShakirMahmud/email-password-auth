@@ -3,6 +3,7 @@ import { auth } from './../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
+    const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
 
     const handleRegister = e => {
@@ -13,14 +14,28 @@ const Register = () => {
 
         //reset error and status
         setError('');
+        setSuccess(false);
+
+        if(password.length < 6){
+            setError('Password must be at least 6 characters long');
+            return;
+        }
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
+        if(!passwordRegex.test(password)){
+            setError('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
+            return;
+        }
+
 
         // create user with email and password
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
-                console.log(result)
+                console.log(result);
+                setSuccess(true);
             }).catch(err => {
                 console.log('ERROR: ' + err.message);
                 setError(err.message);
+                setSuccess(false);
             })
     }
 
@@ -54,7 +69,8 @@ const Register = () => {
                     </svg>
                     <input type="password" name='password' className="grow" placeholder='Password' required />
                 </label>
-                {error && <div className='text-red-500'>{error}</div>}
+                {error && <div className='text-red-500 text-xl font-semibold'>{error}</div>}
+                {success && <div className='text-green-500 text-xl font-semibold'>Registration successful!</div>}
                 <div className="form-control mt-6">
                     <button className="btn btn-primary text-2xl">Register</button>
                 </div>
