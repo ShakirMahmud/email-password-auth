@@ -1,27 +1,36 @@
+import { AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
 import React, { useState } from 'react';
 import { auth } from './../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
     const [success, setSuccess] = useState(false)
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleRegister = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
-        console.log(email, password);
+        const terms = e.target.terms.checked;
+        console.log(email, password, terms);
 
         //reset error and status
         setError('');
         setSuccess(false);
 
-        if(password.length < 6){
+        if (!terms) {
+            setError('You must agree to the terms and conditions');
+            return;
+        }
+
+        if (password.length < 6) {
             setError('Password must be at least 6 characters long');
             return;
         }
         const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
-        if(!passwordRegex.test(password)){
+        if (!passwordRegex.test(password)) {
             setError('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
             return;
         }
@@ -67,10 +76,29 @@ const Register = () => {
                             d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
                             clipRule="evenodd" />
                     </svg>
-                    <input type="password" name='password' className="grow" placeholder='Password' required />
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        name='password'
+                        className="grow"
+                        placeholder='Password'
+                        required />
+                    <button
+                        onClick={() => setShowPassword(!showPassword)}
+                        className='btn btn-xs text-2xl'>
+                        {
+                            showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />
+                        }
+                    </button>
                 </label>
                 {error && <div className='text-red-500 text-xl font-semibold'>{error}</div>}
                 {success && <div className='text-green-500 text-xl font-semibold'>Registration successful!</div>}
+
+                <div className="form-control">
+                    <label className="flex  items-center gap-4 cursor-pointer w-auto">
+                        <input type="checkbox" name="terms" className="checkbox" />
+                        <span className="label-text text-lg">Accept Our Terms and Conditions</span>
+                    </label>
+                </div>
                 <div className="form-control mt-6">
                     <button className="btn btn-primary text-2xl">Register</button>
                 </div>
