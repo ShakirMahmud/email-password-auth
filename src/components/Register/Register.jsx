@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { auth } from './../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
+    const [error, setError] = useState('')
 
     const handleRegister = e => {
         e.preventDefault();
@@ -10,12 +11,16 @@ const Register = () => {
         const password = e.target.password.value;
         console.log(email, password);
 
+        //reset error and status
+        setError('');
+
         // create user with email and password
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
                 console.log(result)
             }).catch(err => {
-                console.log('ERROR: ' + err);
+                console.log('ERROR: ' + err.message);
+                setError(err.message);
             })
     }
 
@@ -34,7 +39,7 @@ const Register = () => {
                         <path
                             d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
                     </svg>
-                    <input type="email" name='email' className="grow" placeholder="Email" />
+                    <input type="email" name='email' className="grow" placeholder="Email" required />
                 </label>
                 <label className="input input-bordered flex items-center gap-2">
                     <svg
@@ -47,12 +52,14 @@ const Register = () => {
                             d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
                             clipRule="evenodd" />
                     </svg>
-                    <input type="password" name='password' className="grow" placeholder='Password' />
+                    <input type="password" name='password' className="grow" placeholder='Password' required />
                 </label>
+                {error && <div className='text-red-500'>{error}</div>}
                 <div className="form-control mt-6">
                     <button className="btn btn-primary text-2xl">Register</button>
                 </div>
             </form>
+
         </div>
     );
 };
