@@ -2,7 +2,7 @@ import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import React, { useState } from 'react';
 import { auth } from './../../firebase.init';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { Link, NavLink } from "react-router-dom";
 
 const Register = () => {
@@ -15,7 +15,9 @@ const Register = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         const terms = e.target.terms.checked;
-        console.log(email, password, terms);
+        const name = e.target.name.value;
+        const photo = e.target.photoUrl.value
+        console.log(email, password, terms, name, photo);
 
         //reset error and status
         setError('');
@@ -49,6 +51,21 @@ const Register = () => {
                     console.log('Email verification sent');
                     setError('');
                     setSuccess(true);
+                });
+                
+                const profile = {
+                    displayName: name,
+                    photoURL: photo
+                }
+                updateProfile(auth.currentUser, profile)
+                .then(()=>{
+                    console.log('Profile updated');
+                    setError('');
+                    setSuccess(true);
+                }).catch(()=>{
+                    console.log('Profile update failed');
+                    setError('Failed to update profile');
+                    setSuccess(false);
                 })
 
             }).catch(err => {
@@ -62,6 +79,12 @@ const Register = () => {
         <div className='my-8 max-w-lg mx-auto'>
             <h2 className="text-4xl">Register</h2>
             <form onSubmit={handleRegister} className='flex flex-col my-8 space-y-6'>
+                <label className="input input-bordered flex items-center gap-2">
+                    <input type="text" name='name' className="grow" placeholder="Name" required />
+                </label>
+                <label className="input input-bordered flex items-center gap-2">
+                    <input type="text" name='photoUrl' className="grow" placeholder="Your Photo Url" required />
+                </label>
                 <label className="input input-bordered flex items-center gap-2">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
