@@ -3,6 +3,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import React, { useState } from 'react';
 import { auth } from './../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Link, NavLink } from "react-router-dom";
 
 const Register = () => {
     const [success, setSuccess] = useState(false)
@@ -103,6 +104,11 @@ const Register = () => {
                     <button className="btn btn-primary text-2xl">Register</button>
                 </div>
             </form>
+            <div className="text-center mt-8">
+                <p>Already have an account? <Link to="/login" className='text-blue-600 link link-hover'>Login</Link></p>
+                </div>
+    
+
 
         </div>
     );
