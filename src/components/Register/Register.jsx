@@ -2,7 +2,7 @@ import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import React, { useState } from 'react';
 import { auth } from './../../firebase.init';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { Link, NavLink } from "react-router-dom";
 
 const Register = () => {
@@ -42,6 +42,15 @@ const Register = () => {
             .then(result => {
                 console.log(result);
                 setSuccess(true);
+
+                // send email verification email
+                sendEmailVerification(auth.currentUser)
+                .then(()=>{
+                    console.log('Email verification sent');
+                    setError('');
+                    setSuccess(true);
+                })
+
             }).catch(err => {
                 console.log('ERROR: ' + err.message);
                 setError(err.message);
@@ -106,9 +115,7 @@ const Register = () => {
             </form>
             <div className="text-center mt-8">
                 <p>Already have an account? <Link to="/login" className='text-blue-600 link link-hover'>Login</Link></p>
-                </div>
-    
-
+            </div>
 
         </div>
     );
